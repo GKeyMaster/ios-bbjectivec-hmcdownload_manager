@@ -1,0 +1,19 @@
+# references:
+# * http://www.objc.io/issue-6/travis-ci.html
+# * https://github.com/supermarin/xcpretty#usage
+
+osx_image: xcode9
+branches:
+  only:
+    - master
+language: objective-c
+cache: cocoapods
+podfile: Example/Podfile
+before_install:
+- gem install cocoapods # Since Travis is not always on latest version
+- pod repo update
+- pod install --project-directory=Example
+script:
+# - xcodebuild test -enableCodeCoverage YES -workspace Example/HMCDownloadManager.xcworkspace -scheme HMCDownloadManager-Example -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.3.1' clean build test | xcpretty
+- xcodebuild -workspace Example/HMCDownloadManager.xcworkspace -scheme "HMCDownloadManager-Example" -destination "OS=11.0,name=iPhone X" -configuration Release ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty;
+- pod lib lint --allow-warnings
